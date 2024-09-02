@@ -1,51 +1,56 @@
 let listaPalavras = [
-  "LIVRO",
-  "FESTA",
-  "NUVEM",
-  "PODER",
-  "VENTO",
-  "CANTO",
-  "VERDE",
-  "PEDRA",
-  "NOITE",
-  "PIANO",
-  "AMIGO",
-  "CALMO",
-  "RISCO",
-  "MUNDO",
-  "FARDO",
-  "BRAVO",
-  "SONHO",
-  "CAMPO",
-  "SOBRA",
-  "LINHA",
-  "FORTE",
-  "FLORA",
-  "ROCHA",
-  "PLANO",
-  "SOLAR",
-  "FOCOS",
-  "CARRO",
-  "VIDRO",
-  "PORTO",
-  "SALTO",
+  ["LIVRO", "Um objeto de leitura com páginas"],
+  ["FESTA", "Celebração com música e dança"],
+  ["NUVEM", "Massa de vapor d'água no céu"],
+  ["PODER", "Capacidade de influenciar ou controlar"],
+  ["VENTO", "Movimento natural do ar"],
+  ["CANTO", "Melodia vocal ou sons harmoniosos"],
+  ["VERDE", "Cor associada à natureza"],
+  ["PEDRA", "Mineral duro encontrado na terra"],
+  ["NOITE", "Período após o pôr do sol"],
+  ["PIANO", "Instrumento musical de teclas"],
+  ["AMIGO", "Pessoa com quem se tem afeto"],
+  ["CALMA", "Estado de tranquilidade ou serenidade"],
+  ["RISCO", "Possibilidade de perigo ou perda"],
+  ["MUNDO", "O planeta Terra e sua humanidade"],
+  ["FARDO", "Carga pesada ou responsabilidade"],
+  ["BRAVO", "Corajoso ou irado"],
+  ["SONHO", "Sequência de imagens durante o sono"],
+  ["CAMPO", "Área aberta de terra"],
+  ["LINHA", "Traço reto ou sequência de pontos"],
+  ["FORTE", "Resistente ou robusto"],
+  ["FLORA", "Conjunto de plantas de uma região"],
+  ["ROCHA", "Formação sólida e mineral"],
+  ["PLANO", "Projeto ou intenção organizada"],
+  ["SOLAR", "Relativo ao sol ou à energia do sol"],
+  ["FOCOS", "Pontos de concentração de luz ou atenção"],
+  ["CARRO", "Veículo motorizado com rodas"],
+  ["VIDRO", "Material transparente e frágil"],
+  ["PORTO", "Local seguro para embarcações"],
+  ["SALTO", "Ação de pular para cima ou para frente"],
 ];
 
 let indexSorteio = Math.floor(Math.random() * listaPalavras.length);
-const palavraSorteada = listaPalavras[indexSorteio];
+const palavraSorteada = listaPalavras[indexSorteio][0];
 
 let numTentativas;
 let tentativas = [];
 let mapaTentativas = []; // 0 = posição correte / 1 = posição errada / 2 = não existe
 let l;
 let mensagem = "";
-let fimDeJogo;
+let janelaModalInfo, janelaModalDica, fimDeJogo;
 
 let tentativa;
-let tv, fonte;
+let tv, infoIcon, dicaIcon, infoTela, dicaTela;
+let fonte;
 
 function preload() {
   tv = loadImage("imagens/tv.png");
+  infoIcon = loadImage("imagens/info.png");
+  dicaIcon = loadImage("imagens/dica.png");
+  infoTela = loadImage("imagens/telainfo.png");
+  dicaTela = loadImage("imagens/teladica.png");
+
   fonte = loadFont("fonte/PixelifySans-Regular.ttf");
 }
 
@@ -59,12 +64,15 @@ function setup() {
   l = 50;
   tentativa = [];
   numTentativas = 0;
+  janelaModalInfo = false;
+  janelaModalDica = false;
   fimDeJogo = false;
 }
 
 function draw() {
   //background(0, 0, 30);
   image(tv, 0, 0);
+
   noStroke();
 
   fill(255);
@@ -101,12 +109,36 @@ function draw() {
   fill(255);
   textSize(25);
   text(mensagem, width / 2, 470);
+
+  push();
+  imageMode(CENTER);
+  let iconOffset1 = sin(radians(frameCount * 2)) * 5;
+  image(
+    infoIcon,
+    176.5,
+    260,
+    infoIcon.width + iconOffset1,
+    infoIcon.height + iconOffset1
+  );
+
+  let iconOffset2 = cos(radians(frameCount * 2)) * 5;
+  image(
+    dicaIcon,
+    623.5,
+    260,
+    dicaIcon.width + iconOffset2,
+    dicaIcon.height + iconOffset2
+  );
+  pop();
+
+  telaAjuda();
+  telaDica();
 }
 
 // Enter = 13
 // Backspace = 8
 function keyPressed() {
-  if (!fimDeJogo) {
+  if (!fimDeJogo && !janelaModalInfo && !janelaModalDica) {
     if (key >= "a" && key <= "z" && tentativa.length < 5) {
       mensagem = "";
       tentativa.push(key.toUpperCase());
@@ -200,5 +232,53 @@ function verificarPalavra(palavra) {
     //tentativa = [];
 
     return false;
+  }
+}
+
+function mouseClicked() {
+  if (
+    mouseX > 176.5 - infoIcon.width / 2 &&
+    mouseX < 176.5 + infoIcon.width / 2 &&
+    mouseY > 260 - infoIcon.height / 2 &&
+    mouseY < 260 + infoIcon.height / 2
+  ) {
+    if (!janelaModalInfo) {
+      janelaModalInfo = true;
+    }
+  } else if (
+    mouseX > 623.5 - dicaIcon.width / 2 &&
+    mouseX < 623.5 + dicaIcon.width / 2 &&
+    mouseY > 260 - dicaIcon.height / 2 &&
+    mouseY < 260 + dicaIcon.height / 2
+  ) {
+    if (!janelaModalDica) {
+      janelaModalDica = true;
+    }
+  }
+
+  if (
+    (janelaModalInfo || janelaModalDica) &&
+    mouseX > 599 &&
+    mouseX < 616.5 &&
+    mouseY > 157.5 &&
+    mouseY < 174.5
+  ) {
+    janelaModalInfo = false;
+    janelaModalDica = false;
+    janelaModal = false;
+  }
+}
+
+function telaAjuda() {
+  if (janelaModalInfo) {
+    image(infoTela, 0, 0);
+  }
+}
+
+function telaDica() {
+  if (janelaModalDica) {
+    image(dicaTela, 0, 0);
+    let dica = listaPalavras[indexSorteio][1];
+    text(dica, width / 2, height / 2, 400);
   }
 }
