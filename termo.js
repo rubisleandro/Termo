@@ -31,16 +31,17 @@ let listaPalavras = [
 ];
 
 let indexSorteio = Math.floor(Math.random() * listaPalavras.length);
-const palavraSorteada = listaPalavras[indexSorteio][0];
+let palavraSorteada = listaPalavras[indexSorteio][0];
 
+// parâmetros
 let numTentativas;
-let tentativas = [];
-let mapaTentativas = []; // 0 = posição correte / 1 = posição errada / 2 = não existe
+let tentativa;
+let tentativas;
+let mapaTentativas; // 0 = posição correte / 1 = posição errada / 2 = não existe
 let l;
-let mensagem = "";
+let mensagem;
 let janelaModalInfo, janelaModalDica, fimDeJogo;
 
-let tentativa;
 let tv, infoIcon, dicaIcon, infoTela, dicaTela;
 let fonte;
 
@@ -62,11 +63,8 @@ function setup() {
   textAlign(CENTER, CENTER);
 
   l = 50;
-  tentativa = [];
-  numTentativas = 0;
-  janelaModalInfo = false;
-  janelaModalDica = false;
-  fimDeJogo = false;
+
+  iniciarParametros();
 }
 
 function draw() {
@@ -175,15 +173,15 @@ function verificarFimDeJogo(resultado) {
     mensagem = "PARABÉNS!";
     document.getElementById(
       "fimdejogo"
-    ).innerHTML = `<p id="parabens" class="pixelify-sans-text">AEEE, CONSEGUIMOS!!! OBRIGADE PELA AJUDA!!!</p>`;
-    noLoop();
+    ).innerHTML = `<p id="fim" class="pixelify-sans-text">AEEE, CONSEGUIMOS!!! OBRIGADE PELA AJUDA!!!</p>`;
+    //noLoop();
   } else if (numTentativas > 4) {
     fimDeJogo = true;
     mensagem = "POXA! ACABARAM TODAS AS SUAS CHANCES!";
     document.getElementById(
       "fimdejogo"
-    ).innerHTML = `<p id="poxa" class="pixelify-sans-text">POXA, NÃO CONSEGUIMOS! MAS TUDO BEM, PODEMOS TENTAR DE NOVO!</p>`;
-    noLoop();
+    ).innerHTML = `<p id="fim" class="pixelify-sans-text">POXA, NÃO CONSEGUIMOS! MAS TUDO BEM, PODEMOS TENTAR DE NOVO!</p>`;
+    //noLoop();
   }
 }
 
@@ -267,6 +265,10 @@ function mouseClicked() {
     janelaModalDica = false;
     janelaModal = false;
   }
+
+  if (mouseX > 590 && mouseX < 700 && mouseY > 562.5 && mouseY < 587.5) {
+    iniciarParametros();
+  }
 }
 
 function telaAjuda() {
@@ -281,4 +283,24 @@ function telaDica() {
     let dica = listaPalavras[indexSorteio][1];
     text(dica, width / 2, height / 2, 400);
   }
+}
+
+function iniciarParametros() {
+  indexSorteio = Math.floor(Math.random() * listaPalavras.length);
+  palavraSorteada = listaPalavras[indexSorteio][0];
+
+  numTentativas = 0;
+  tentativa = [];
+  tentativas = [];
+  mapaTentativas = [];
+
+  janelaModalInfo = false;
+  janelaModalDica = false;
+  fimDeJogo = false;
+
+  mensagem = "";
+
+  document.getElementById(
+    "fimdejogo"
+  ).innerHTML = `<p id="fim" class="pixelify-sans-text"> </p>`;
 }
